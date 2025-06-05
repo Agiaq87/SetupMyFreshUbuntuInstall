@@ -12,8 +12,10 @@ if [ -f /etc/lsb-release ]; then
     ./common/setup_bash.sh
     ./ubuntu/base.sh
     ./ubuntu/develop.sh
-    ./ubuntu/virtualization.sh
     ./ubuntu/latex.sh
+    ./ubuntu/virtualization.sh
+    ./ubuntu/ui_tools.sh
+    ./ubuntu/network.sh
     ./ubuntu/mobile.sh
     ./ubuntu/synology.sh
     ./ubuntu/config.sh
