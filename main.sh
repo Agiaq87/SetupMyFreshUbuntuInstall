@@ -11,6 +11,7 @@ if [ -f /etc/lsb-release ]; then
     log "Found an Ubuntu installation"
     ./common/setup_bash.sh
     ./ubuntu/base.sh
+    ./ubuntu/gnome.sh
     ./ubuntu/develop.sh
     ./ubuntu/latex.sh
     ./ubuntu/virtualization.sh

@@ -121,3 +121,15 @@ detect_desktop_env() {
         echo "UNKNOWN"
     fi
 }
+
+
+check_if_extensions_directory_exists() {
+    local extensions_dir="$HOME/.local/share/gnome-shell/extensions"
+    if [ -d "$extensions_dir" ]; then
+        log INFO "Gnome extensions directory exists: $extensions_dir"
+        return 0
+    else
+        log WARN "Gnome extensions directory does not exist: $extensions_dir"
+        return 1
+    fi
+}
