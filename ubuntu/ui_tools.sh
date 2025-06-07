@@ -1,12 +1,12 @@
 #!/bin/bash
-set -x
+set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../common/utils.sh"
 
 log INFO "UI utility section"
-ask_yes_no "Do you want to install Figma?" Y; then
+if ask_yes_no "Do you want to install Figma?" Y; then
     if ask_yes_no "Do you want to install snap package?" Y; then
-        silent_run_with_spinner "Installing Figma" sudo snap install figma-linux
+        ask_to_install "Figma" sudo snap install figma-linux
     else
         silent_run_with_spinner "Installing Figma from deb package"  bash -c '
             wget https://github.com/Figma-Linux/figma-linux/releases/download/v0.11.5/figma-linux_0.11.5_linux_amd64.deb
@@ -19,3 +19,4 @@ ask_yes_no "Do you want to install Figma?" Y; then
         '
         silent_run_with_spinner "Remove Figma deb package" rm figma-linux*.deb
     fi
+fi

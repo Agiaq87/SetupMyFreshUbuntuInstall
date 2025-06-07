@@ -38,6 +38,18 @@ ask() {
     echo "$REPLY"
 }
 
+print_menu () {
+    local strings=("$@")
+    local BLUE='\033[0;34m'
+    local NC='\033[0m'
+
+    local counter=1
+    for string in "${strings[@]}"; do
+        echo -e "${BLUE}${counter}. ${string}${NC}"
+        ((counter++))
+    done
+}
+
 ask_yes_no() {
     local prompt="$1"
     local default="${2:-N}"
@@ -98,7 +110,7 @@ silent_run_with_spinner() {
     ("$@" >/dev/null 2>&1) &
     spinner
     if [ $? -eq 0 ]; then
-        log INFO "$description completes"
+        log INFO "$description completed"
     else
         log ERROR "$description failed"
         exit 1
@@ -134,66 +146,104 @@ check_if_extensions_directory_exists() {
     fi
 }
 
+# Gnome
 install_gnome_extension_from_url() {
     local extension_url="$1"
-    local temp_zip="/tmp/gnome_extension_$(date +%s).zip"
-    local temp_dir="/tmp/gnome_extension_extract_$(date +%s)"
-    
+    if [[ -z "$extension_url" ]]; then
+        log ERROR "No URL provided for Gnome extension"
+        return 1
+    fi
+
+    local timestamp=$(date +%s)
+    local pid=$$
+    local temp_zip="/tmp/gnome_extension_${timestamp}_${pid}.zip"
+    local temp_dir="/tmp/gnome_extension_extract_${timestamp}_${pid}"
+
     if ! check_if_extensions_directory_exists; then
         log INFO "Creating Gnome extensions directory"
         mkdir -p "$HOME/.local/share/gnome-shell/extensions"
     fi
 
     log INFO "Installing Gnome extension from URL: $extension_url"
-    
+
     # Download
-    silent_run_with_spinner "Downloading Gnome extension" wget -q -O "$temp_zip" "$extension_url"
-    
+    silent_run_with_spinner "Downloading Gnome extension" wget -q -O "$temp_zip" "$extension_url" || {
+        log ERROR "Failed to download extension from $extension_url"
+        return 1
+    }
+
     # Extract to temporary directory
     mkdir -p "$temp_dir"
-    silent_run_with_spinner "Extracting Gnome extension" unzip -q "$temp_zip" -d "$temp_dir"
-    
+    silent_run_with_spinner "Extracting Gnome extension" unzip -q "$temp_zip" -d "$temp_dir" || {
+        log ERROR "Failed to extract the extension ZIP file"
+        rm -f "$temp_zip"
+        rm -rf "$temp_dir"
+        return 1
+    }
+
     # Get the UUID from metadata.json
     local metadata_file="$temp_dir/metadata.json"
     if [[ ! -f "$metadata_file" ]]; then
         log ERROR "metadata.json not found in extension"
-        rm -rf "$temp_dir" "$temp_zip"
+        rm -f "$temp_zip"
+        rm -rf "$temp_dir"
         return 1
     fi
-    
-    # More compatible way to extract UUID
+
     local extension_uuid
     extension_uuid=$(jq -r '.uuid' "$metadata_file" 2>/dev/null)
-    
-    if [[ -z "$extension_uuid" ]]; then
-        log ERROR "Could not extract UUID from metadata.json"
-        rm -rf "$temp_dir" "$temp_zip"
+    if [[ -z "$extension_uuid" || "$extension_uuid" == "null" ]]; then
+        log ERROR "Could not extract valid UUID from metadata.json"
+        rm -f "$temp_zip"
+        rm -rf "$temp_dir"
         return 1
     fi
-    
-    # Create final directory and move contents
+
+    # Prepare final extension directory
     local extension_dir="$HOME/.local/share/gnome-shell/extensions/$extension_uuid"
     if [[ -d "$extension_dir" ]]; then
         log INFO "Extension already exists, removing old version"
         rm -rf "$extension_dir"
     fi
-    
-    mkdir -p "$extension_dir"
-    cp -r "$temp_dir"/* "$extension_dir"/
-    rm -rf "$temp_dir" "$temp_zip"
 
-    log INFO "Enabling Gnome extension: $extension_uuid"
-    gnome-extensions enable "$extension_uuid"
-    log INFO "Gnome extension installed and enabled: $extension_uuid"
+    mkdir -p "$extension_dir"
+    cp -r "$temp_dir"/* "$extension_dir"/ || {
+        log ERROR "Failed to copy extension files"
+        rm -f "$temp_zip"
+        rm -rf "$temp_dir"
+        return 1
+    }
+
+    # Clean up
+    rm -f "$temp_zip"
+    rm -rf "$temp_dir"
+
+    # Enable extension
+    if gnome-extensions enable "$extension_uuid" 2>/dev/null; then
+        log INFO "Gnome extension installed and enabled: $extension_uuid"
+    else
+        log WARN "Extension $extension_uuid installed, but enabling failed"
+    fi
 }
 
 install_gnome_extension_from_prompt() {
     local extension_name="$1"
     local extension_url="$2"
 
-    if ask_yes_no "Do you want to install the Gnome extension '$extension_name'?" Y; then
-        silent_run_with_spinner "Installing Gnome extension: $extension_name" install_gnome_extension_from_url "$extension_url"
-    else
-        log INFO "Skipping installation of Gnome extension: $extension_name"
+    if [[ -z "$extension_name" || -z "$extension_url" ]]; then
+        log ERROR "Missing name or URL for Gnome extension"
+        return 1
+    fi
+
+    silent_run_with_spinner "Installing Gnome extension: $extension_name" install_gnome_extension_from_url "$extension_url"
+}
+
+# Develop
+ask_to_install() {
+    local app_name="$1"
+    local execute="$2"
+    if ask_yes_no "Do you need $app_name?" Y; then
+        silent_run_with_spinner "Installing $app_name" "$execute"
     fi
 }
+

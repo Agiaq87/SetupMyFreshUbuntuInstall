@@ -1,15 +1,18 @@
 #!/bin/bash
-set -x
+set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../common/utils.sh"
 
+log INFO "GNOME Tools"
+if ask_yes_no "Do you want to install gnome tweaks?" Y; then
+    silent_run_with_spinner "Install gnome tweaks" sudo nala install gnome-tweaks
+fi
+
 log INFO "Gnome extensions section"
-ask_yes_no "Do you want to install Gnome extensions?" Y; then
+if ask_yes_no "Do you want to install Gnome extensions?" Y; then
     silent_run_with_spinner "Installing Gnome extensions" bash -c '
-        sudo nala install -y gnome-shell-extensions 
-        chrome-gnome-shell
+        sudo nala install -y gnome-shell-extensions chrome-gnome-shell \
         gnome-tweaks
-        gnome-extensions enable
         '
         if ! check_if_extensions_directory_exists; then
             log INFO "Make extensions directory"
@@ -17,7 +20,9 @@ ask_yes_no "Do you want to install Gnome extensions?" Y; then
         fi
 
     log INFO "Starting gnome shell extensions section" 
-        silent_run_with_spinner "Check if tools are already installed" sudo nala install -y wget unzip jq
+        silent_run_with_spinner "Check if tools are already installed" bash -c '
+        sudo nala install -y wget unzip jq
+        '
         log INFO " Starting installation of most popular Gnome extensions"
         install_gnome_extension_from_prompt "Removable Drive Menu" "https://extensions.gnome.org/extension-data/drive-menugnome-shell-extensions.gcampax.github.com.v63.shell-extension.zip"
         install_gnome_extension_from_prompt "AppIndicator and KStatusNotifierItem Support" "https://extensions.gnome.org/extension-data/appindicatorsupportrgcjonas.gmail.com.v60.shell-extension.zip"
@@ -58,3 +63,9 @@ ask_yes_no "Do you want to install Gnome extensions?" Y; then
         install_gnome_extension_from_prompt "ArcMenu" "https://extensions.gnome.org/extension-data/arcmenuarcmenu.com.v66.shell-extension.zip" 
         install_gnome_extension_from_prompt "Media Controls" "https://extensions.gnome.org/extension-data/mediacontrolscliffniff.github.com.v37.shell-extension.zip"
         install_gnome_extension_from_prompt "Dash to Panel" "https://extensions.gnome.org/extension-data/dash-to-paneljderose9.github.com.v68.shell-extension.zip"
+fi
+
+log INFO "Other GUI tools"
+if ask_yes_no "Do you want to install Ulauncher?" Y; then
+    silent_run_with_spinner "Add repository" sudo add-apt-repository universe -y && sudo add-apt-repository ppa:agornostal/ulauncher -y && sudo nala update && sudo nala install ulauncher
+fi

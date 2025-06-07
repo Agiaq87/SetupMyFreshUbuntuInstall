@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x #Stop on error
+set -e 
 
 #Find current directory where script it's located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -1,10 +1,10 @@
 #!/bin/bash
-set -x
+set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../common/utils.sh"
 
 log INFO "VirtualBox section"
-ask_yes_no "Do you want to install VirtualBox?" Y; then
+if ask_yes_no "Do you want to install VirtualBox?" Y; then
     if ask_yes_no "Do you prefer to install VirtualBox from official repository? [Suggested: No]" Y; then
         silent_run_with_spinner "Adding VirtualBox's Repo GPG key"  bash -c '
             wget -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg
@@ -25,9 +25,10 @@ ask_yes_no "Do you want to install VirtualBox?" Y; then
     else
         silent_run_with_spinner "Installing VirtualBox from ubuntu repository" sudo nala install -y virtualbox
     fi
+fi
 
 log INFO "Docker section"
-ask_yes_no "Do you want to install docker?" Y; then
+if ask_yes_no "Do you want to install docker?" Y; then
     if ask_yes_no "Do you wanto to use Docker Desktop repository?"; Y then
         silent_run_with_spinner "Docker dependencies" sudo nala install apt-transport-https ca-certificates software-properties-common gnome-terminal -y
         silent_run_with_spinner "Add GPG key..." bash -c 'sudo install -m 0755 -d /etc/apt/keyrings 
@@ -50,9 +51,11 @@ ask_yes_no "Do you want to install docker?" Y; then
         silent_run_with_spinner "Setup Docker" sudo systemctl enable docker --now
         silent_run_with_spinner "Add user to docker group" sudo usermod -aG docker "$USER"
     fi
+fi
 
 log INFO "QEMU/KVM section"
-ask_yes_no "Do you want to install QEMU/KVM?" Y; then
+if ask_yes_no "Do you want to install QEMU/KVM?" Y; then
     silent_run_with_spinner "Installing libraries" nala install -y qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-utils virt-manager ovmf
     silent_run_with_spinner "Add user to kvm group" sudo adduser $USER kvm
     silent_run_with_spinner "Start service" sudo systemctl enable --now libvirtd
+fi

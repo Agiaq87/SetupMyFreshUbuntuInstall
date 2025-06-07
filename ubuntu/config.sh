@@ -1,3 +1,3 @@
 #!/bin/bash
-set -x
+set -e
 source ../common/utils.sh
