@@ -35,15 +35,26 @@ ask_yes_no "Do you want to install Gnome extensions?" Y; then
         install_gnome_extension_from_prompt "Caffeine" "https://extensions.gnome.org/extension-data/caffeinepatapon.info.v57.shell-extension.zip"
         install_gnome_extension_from_prompt "TeaTimer" "https://extensions.gnome.org/extension-data/TeaTimerzener.sbg.at.v9.shell-extension.zip"
         install_gnome_extension_from_prompt "Wifi QR Code" "https://extensions.gnome.org/extension-data/wifiqrcodeglerro.pm.me.v17.shell-extension.zip"
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
-        install_gnome_extension_from_prompt
+        install_gnome_extension_from_prompt "Resolution and Refresh Rate in Quick Settings" "https://extensions.gnome.org/extension-data/quick-settings-resolution-and-refresh-raterukins.github.io.v6.shell-extension.zip"
+        install_gnome_extension_from_prompt "Notifications Alert" "https://extensions.gnome.org/extension-data/notifications-alert-on-user-menuhackedbellini.gmail.com.v53.shell-extension.zip"
+        install_gnome_extension_from_prompt "Clipboard Indicator" "https://extensions.gnome.org/extension-data/clipboard-indicatortudmotu.com.v68.shell-extension.zip"
+        install_gnome_extension_from_prompt "Better End Session Dialog" "https://extensions.gnome.org/extension-data/better-end-session-dialogpopov895.ukr.net.v28.shell-extension.zip"
+        install_gnome_extension_from_prompt "Bluetooth File Sender" "https://extensions.gnome.org/extension-data/bluetooth-file-senderChristophrrb.github.io.v8.shell-extension.zip"
+        install_gnome_extension_from_prompt "Zen" "https://extensions.gnome.org/extension-data/zenle0.gs.v9.shell-extension.zip"
+        install_gnome_extension_from_prompt "Systemd Status" "https://extensions.gnome.org/extension-data/systemd-statusne0sight.github.io.v8.shell-extension.zip"
+        install_gnome_extension_from_prompt "Keyboard Backlight Slider" "https://extensions.gnome.org/extension-data/keyboard-backlight-menuophir.dev.v6.shell-extension.zip"
+        install_gnome_extension_from_prompt "Custom OSD" "https://extensions.gnome.org/extension-data/custom-osdneuromorph.v28.shell-extension.zip"
+        install_gnome_extension_from_prompt "Containers" "https://extensions.gnome.org/extension-data/containersroyg.v38.shell-extension.zip"
+        install_gnome_extension_from_prompt "HeadsetControl" "https://extensions.gnome.org/extension-data/HeadsetControllauinger-clan.de.v59.shell-extension.zip"
+        install_gnome_extension_from_prompt "Smart Home" "https://extensions.gnome.org/extension-data/smart-homechlumskyvaclav.gmail.com.v13.shell-extension.zip"
+        install_gnome_extension_from_prompt "Printers" "https://extensions.gnome.org/extension-data/printerslinux-man.org.v29.shell-extension.zip"
+        install_gnome_extension_from_prompt "SettingsCenter" "https://extensions.gnome.org/extension-data/SettingsCenterlauinger-clan.de.v31.shell-extension.zip"
+        install_gnome_extension_from_prompt "Bluetooth Battery Meter" "https://extensions.gnome.org/extension-data/Bluetooth-Battery-Metermaniacx.github.com.v32.shell-extension.zip"
+        install_gnome_extension_from_prompt "Tweaks & Extensions in System Menu" "https://extensions.gnome.org/extension-data/tweaks-system-menuextensions.gnome-shell.fifi.org.v24.shell-extension.zip"
+        install_gnome_extension_from_prompt "Easy Docker Containers" "https://extensions.gnome.org/extension-data/easy_docker_containersred.software.systems.v29.shell-extension.zip"
+        install_gnome_extension_from_prompt "Status Area Horizontal Spacing" "https://extensions.gnome.org/extension-data/status-area-horizontal-spacingmathematical.coffee.gmail.com.v30.shell-extension.zip"
+        install_gnome_extension_from_prompt "Random Wallpaper" "https://extensions.gnome.org/extension-data/randomwallpaperiflow.space.v36.shell-extension.zip"
+        install_gnome_extension_from_prompt "Lock Keys" "https://extensions.gnome.org/extension-data/lockkeysvaina.lt.v61.shell-extension.zip"
+        install_gnome_extension_from_prompt "ArcMenu" "https://extensions.gnome.org/extension-data/arcmenuarcmenu.com.v66.shell-extension.zip" 
+        install_gnome_extension_from_prompt "Media Controls" "https://extensions.gnome.org/extension-data/mediacontrolscliffniff.github.com.v37.shell-extension.zip"
+        install_gnome_extension_from_prompt "Dash to Panel" "https://extensions.gnome.org/extension-data/dash-to-paneljderose9.github.com.v68.shell-extension.zip"
