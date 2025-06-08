@@ -20,7 +20,7 @@ else
     log INFO "Skipping GitHub desktop installation"
 fi
 
-ask_to_install "GitKraken Desktop" sudo snap install gitkraken
+ask_to_install "GitKraken Desktop" sudo snap install --classic  gitkraken
 
 ask_to_install "Postman" sudo snap install postman
 ask_to_install "Insomnia" sudo snap install insomnia
@@ -29,11 +29,8 @@ if ask_yes_no "Do you want to install Bruno (Postman like app)?" Y; then
     silent_run_with_spinner "Installing Bruno" sudo snap install bruno
 fi
 
-if ask_yes_no "Do you want Visual Studio Code with GitHub integration?" Y; then
-    ask_to_install "Visual Studio Code" sudo snap install code
-else
-    ask_to_install "VSCodium" sudo snap install codium
-fi
+ask_to_install "Visual Studio Code" sudo snap install code
+ask_to_install "VSCodium" sudo snap install codium
 
 ask_to_install "Sublime Text" sudo snap install sublime-text
 ask_to_install "Eclipse" sudo snap install eclipse

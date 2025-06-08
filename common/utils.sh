@@ -1,5 +1,7 @@
 #!/bin/bash
 
+declare -a ERROR_ENCOUNTERED
+
 check_root() {
     if [ "$EUID" -ne 0 ]; then
         log ERROR "Need admin privileges."
@@ -77,7 +79,7 @@ confirm() {
     [[ "$REPLY" =~ ^[Yy]$ ]]
 }
 
-run_or_fail() {
+run_or_continue() {
     local description="$1"
     shift
     log INFO "$description..."
@@ -85,7 +87,8 @@ run_or_fail() {
         log INFO "$description completed"
     else
         log ERROR "$description failed"
-        exit 1
+        ERROR_ENCOUNTERED+=("$description")
+        return 1
     fi
 }
 
@@ -113,7 +116,8 @@ silent_run_with_spinner() {
         log INFO "$description completed"
     else
         log ERROR "$description failed"
-        exit 1
+        ERROR_ENCOUNTERED+=("$description")
+        return 1
     fi
 }
 
