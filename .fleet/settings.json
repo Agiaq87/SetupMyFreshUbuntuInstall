@@ -7,6 +7,10 @@
         {
             "type": "add",
             "pluginName": "fleet.shell"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.python.ai"
         }
     ]
 }
