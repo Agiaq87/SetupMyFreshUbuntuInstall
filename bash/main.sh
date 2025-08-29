@@ -21,10 +21,3 @@ if [ -f /etc/lsb-release ]; then
     ./ubuntu/synology.sh
     ./ubuntu/config.sh
 fi
-
-
-#if [ -f /etc/arch-release ]; then
-#    log WARN "Found an Arch Linux installation"
-#    ./arch/install.sh
-#    ./arch/config.sh
-#el
