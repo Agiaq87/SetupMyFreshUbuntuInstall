@@ -1,9 +1,10 @@
+#!/bin/bash
 request() {
     local message="$1"
     local command="$2"
 
     # chiede conferma
-    read -p "${message} (Y/N): " choice
+    read -r -p "${message} (Y/N): " choice
 
     case "$choice" in
         y|Y )
@@ -20,7 +21,7 @@ requestSnap() {
     local command="$2"
 
     # chiede conferma
-    read -p "${message} (Y/N): " choice
+    read -r -p "${message} (Y/N): " choice
 
     case "$choice" in
         y|Y )
@@ -37,7 +38,7 @@ requestFlatpak() {
     local command="$2"
 
     # chiede conferma
-    read -p "${message} (Y/N): " choice
+    read -r -p "${message} (Y/N): " choice
 
     case "$choice" in
         y|Y )
@@ -50,7 +51,7 @@ requestFlatpak() {
 }
 
 docker() {
-    read -p "Do you want to install Docker and Docker Compose? (Y/N): " choice
+    read -r -p "Do you want to install Docker and Docker Compose? (Y/N): " choice
 
     case "$choice" in
         y|Y )
@@ -65,7 +66,7 @@ docker() {
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
             sudo apt-get update
             sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-            sudo usermod -aG docker $USER
+            sudo usermod -aG docker "$USER"
             ;;
         * )
             echo "Operazione annullata."
@@ -74,7 +75,7 @@ docker() {
 }
 
 ulauncher() {
-    read -p "Do you want to install ULauncher? (Y/N): " choice
+    read -r -p "Do you want to install ULauncher? (Y/N): " choice
 
     case "$choice" in
         y|Y )
@@ -87,7 +88,7 @@ ulauncher() {
 }
 
 chrome() {
-    read -p "Do you want to install Google Chrome? (Y/N): " choice
+    read -r -p "Do you want to install Google Chrome? (Y/N): " choice
 
     case "$choice" in
         y|Y )
@@ -102,25 +103,8 @@ chrome() {
     esac
 }
 
-edge() {
-    read -p "Do you want to install Microsoft Edge? (Y/N): " choice
-
-    case "$choice" in
-        y|Y )
-            curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-            sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-            sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
-            sudo apt update
-            sudo apt install -y microsoft-edge-stable
-                        ;;
-        * )
-            echo "Operazione annullata."
-            ;;
-    esac
-}
-
 teamViewer() {
-    read -p "Do you want to install TeamViewer? (Y/N): " choice
+    read -r -p "Do you want to install TeamViewer? (Y/N): " choice
 
     case "$choice" in
         y|Y )
@@ -171,57 +155,142 @@ DESKTOP_EOF
     
 }
 
+synology() {
+    DOWNLOAD_DIR="$HOME/deb_packages"
+    mkdir -p "$DOWNLOAD_DIR"
+
+    declare -a SYNOLGY_DEB_URLS=(
+        "https://global.synologydownload.com/download/Utility/Assistant/7.0.5-50070/Ubuntu/x86_64/synology-assistant_7.0.5-50070_amd64.deb"
+        "https://global.synologydownload.com/download/Utility/SynologyDriveClient/3.5.2-16111/Ubuntu/Installer/synology-drive-client-16111.x86_64.deb"
+        "https://global.synologydownload.com/download/Utility/NoteStationClient/2.2.5-804/Ubuntu/x86_64/synology-note-station-client-2.2.5-804-linux-x64.deb"
+        "https://global.synologydownload.com/download/Utility/Presto/2.1.2-0665/Ubuntu/x86_64/synology-presto-0665.x86_64.deb"
+    )
+
+    log INFO "Start download Synology packages"
+
+    for url in "${SYNOLGY_DEB_URLS[@]}"; do
+        filename=$(basename "$url")
+        filepath="$DOWNLOAD_DIR/$filename"
+
+        echo "Download $filename" 
+        
+        if wget -q -O "$filepath" "$url"; then
+            echo "Download OK: $filename"
+        else
+            echo "Download failed: $filename"
+        fi
+    done
+
+    cd "$DOWNLOAD_DIR" || exit 1
+
+    for deb in *.deb; do
+        if [ -f "$deb" ]; then
+            echo "Install: $deb"
+            #[ -f "$deb" ] && apt install -y "./$deb"
+            if sudo apt install -y "./$deb"; then
+                echo "Installation OK: $deb"
+            else
+                echo "Installation failed: $deb"
+            fi
+        fi
+    done
+}
+
+optimizeCpu() {
+    read -r -p "Do you want to set CPU governor to performance? (Y/N): " choice
+    case "$choice" in
+        y|Y )
+            for cpu in /sys/devices/system/cpu/cpu[0-9]*; do
+                sudo cpufreq-set -c "${cpu##*/cpu}" -g performance
+            done
+            git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+            cd auto-cpufreq && sudo ./auto-cpufreq-installer
+            ;;
+        * )
+            echo "Aborted."
+            ;;
+    esac
+}
+
+developmentTools() {
+    read -r -p "Do you want to install development tools (curl, wget, build-essential, headers)? (Y/N): " choice
+
+    case "$choice" in
+        y|Y )
+            KERNEL_VERSION=$(uname -r)
+            eval "sudo nala install -y curl wget build-essential linux-headers-${KERNEL_VERSION} linux-headers-generic git"
+            ;;
+        * )
+            echo "Operazione annullata."
+            ;;
+    esac
+}
+
 echo "Starting backup script..."
 # Update and upgrade the system
-sudo apt update && sudo apt upgrade -y && sudo snap refresh
-
-# Dirver section
-request "Do you want to install additional drivers?" "ubuntu-drivers-common && sudo ubuntu-drivers autoinstall"
-request "Do you want to install CoreCtrl (AMD control daemon)?" "corectrl"
-request "Do you want to install lm-sensors and psensor (hardware monitoring)?" "lm-sensors psensor"
+sudo apt update && sudo apt upgrade -y && sudo snap refresh && sudo apt install unattended-upgrades -y && sudo apt install -y nala && sudo nala fetch && sudo add-apt-repository multiverse
 
 # Must install
-request "Do you want to install nala?" "sudo apt install -y nala"
-sudo nala fetch
 request "Do you want to install package gui utils ?" "gdebi synaptic"
 request "Do you want to install Flatpak and setup Flathub?" "flatpak && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo"
-request "Do you want to install compression utils?" "unzip zip unrar p7zip tar"
 request "Do you need restricted extras (mp3, etc) and gstreamer codec?" "ubuntu-restricted-extras gstreamer1.0-vaapi"
 request "Do you want to install system monitoring tools?" "htop neofetch bpytop"
 request "Do you want to install file system tools?" "samba-common-bin exfat-fuse ntfs-3g"
-request "Do you want to install development tools (curl, wget, build-essential, headers)?" "curl wget build-essential linux-headers-$(uname -r) linux-headers-generic git"
-request "Do you want to install video tools (libfuse2, libxi6, libxrender1, libxtst6, libfontconfig1, mesa-utils)?" "libfuse2 libxi6 libxrender1 libxtst6 libfontconfig1 mesa-utils"
+developmentTools
+request "Do you want to install video tools (libxi6, libxrender1, libxtst6, libfontconfig1, mesa-utils)?" "libxi6 libxrender1 libxtst6 libfontconfig1 mesa-utils"
 request "Do you want to install neofetch?" "neofetch"
 request "Do you want to install Fail2ban?" "fail2ban"
 request "Do you want to install GPG?" "gnupg"
 
+# AppImage 
+request "Do you want to install AppImage support" "libfuse2t64"
+
 # Browser
 chrome
-edge
-requestSnap "Do you want to install Opera browser? [SNAP]" "opera-stable"
+requestFlatpak "Do you want to install Microsoft Edge? [FLATPAK]" "com.microsoft.Edge"
+requestSnap "Do you want to install Opera browser? [SNAP]" "opera"
 
 # Cloud integration
 request "Do you want to install cloud integration tools rclone?" "rclone"
 request "Do you want to install Dropbox CLI?" "nautilus-dropbox"
 request "Do you want to installNextcloud client?" "nextcloud-desktop"
 
+# Compression
+request "Do you want to install compression utils?" "unzip zip unrar p7zip tar"
+requestFlatpak "Do you want to install PeaZip? [FLATPAK]" "io.github.peazip.PeaZip"
+
 # Database 
 requestSnap "Do you want to install DBeaver CE? [SNAP]" "dbeaver-ce"
 request "Do you want to install PostgreSQL client tools?" "postgresql-client"
 
+# Driver section
+request "Do you want to install additional drivers?" "ubuntu-drivers-common && sudo ubuntu-drivers autoinstall"
+request "Do you want to install CoreCtrl (AMD control daemon)?" "corectrl"
+request "Do you want to install lm-sensors and psensor (hardware monitoring)?" "lm-sensors psensor"
+request "Do you want to install cpufreq (CPU frequency scaling)?" "cpufrequtils"
+optimizeCpu
+
 # Docker
 docker
+
+# EFI tools
+request "Do you want to install efibootmgr (manage UEFI boot entries)?" "efibootmgr"
+request "Do you want to install EFI GUI tools?" "python3 python3-gi libgtk-4-1 gir1.2-gtk-4.0"
+request "Do you want to install fwupd (firmware updates)?" "fwupd"
+sudo fwupdmgr get-devices && sudo fwupdmgr refresh && sudo fwupdmgr get-updates && sudo fwupdmgr update
 
 # Firewall
 request "Do you want to install and enable UFW firewall?" "ufw"
 request "Do you want to install UFW GUI?" "gufw"
-sudo ufw enable
+sudo systemctl enable ufw
+sudo systemctl start ufw
 
 # Font
 request "Do you want to install Microsoft fonts?" "ttf-mscorefonts-installer"
 request "Do you want to install Font Manager?" "font-manager"
-request "Do you want to install additional fonts (Noto, Papirus, Fira)?" "fonts-noto fonts-noto-cjk fonts-noto-color-emoji fonts-firacode fonts-powerline"
+request "Do you want to install additional fonts (Noto, Papirus, Fira)?" "fonts-noto fonts-noto-cjk fonts-noto-color-emoji fonts-powerline"
 request "Do you want to install FiraCode font?" "fonts-firacode"
+sudo fc-cache -f -v
 
 # Flutter SDK
 requestSnap "Do you want to install Flutter SDK? [SNAP]" "flutter"
@@ -248,9 +317,13 @@ request "Do you want to install Yuzu (Nintendo Switch emulator)?" "yuzu"
 # Gnome
 request "Do you want to install gnome tweaks?" "gnome-tweaks"
 request "Do you want to install Gnome extensions?" "gnome-shell-extensions chrome-gnome-shell"
+request "Do you want to install Gnome Shell Extension Manager" "gnome-shell-extension-manager"
 
 # Go
 request "Do you want to install Go language?" "golang"
+
+# Gparted
+request "Do you want to install GParted (partition manager)?" "gparted"
 
 # Jetbrains Toolbox
 jetbrainsToolbox
@@ -284,11 +357,17 @@ requestFlatpak "Do you want to install OpenRGB? [FLATPAK]" "openrgb"
 # Python
 request "Do you want to install Python and pip?" "python3 python3-pip python3-dev"
 
+# Qemu
+request "Do you want to install QEMU and virt-manager?" "qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-utils virt-manager ovmf"
+
 # Rust
 request "Do you want to install Rust toolchain?" "rustc cargo"
 
 # StreamController
 requestFlatpak "Do you want to install StreamController? [FLATPAK]" "streamcontroller"
+
+# Synology tools
+synology
 
 # TeamViewer
 teamViewer
@@ -299,15 +378,19 @@ ulauncher
 # Utils
 request "Do you want to install Stacer (system optimizer/monitor)?" "stacer"
 request "Do you want to install BleachBit (system cleaner)?" "bleachbit"
+request "Do you want to install OBS Studio (screen recorder)?" "obs-studio"
 
 # VirtualBox
 request "Do you want to install VirtualBox and extension pack?" "virtualbox virtualbox-ext-pack"
-sudo usermod -aG vboxusers $USER
+sudo usermod -aG vboxusers "$USER"
+
+# Windows
+requestFlatpak "Do you want to install Bottles (manage Windows apps)? [FLATPAK]" "com.usebottles.bottles"
 
 # Finale
-echo "Eseguo la pulizia dei pacchetti non necessari..."
+echo "Cleaning up..."
 sudo apt autoremove -y
 sudo apt autoclean
 
-
+echo "Completed! Bye"
 
