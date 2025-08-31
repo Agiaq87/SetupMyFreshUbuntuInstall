@@ -11,7 +11,7 @@ request() {
             eval "sudo nala install -y ${command}"
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
             ;;
     esac
 }
@@ -28,7 +28,7 @@ requestSnap() {
             eval "sudo snap install ${command}"
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
             ;;
     esac
 }
@@ -45,9 +45,71 @@ requestFlatpak() {
             eval "flatpak install flathub ${command} -y"
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
             ;;
     esac
+}
+
+log() {
+    local level="${1:-INFO}"
+    shift
+    local message="$*"
+    local timestamp
+    timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+
+    if is_terminal; then
+        case "$level" in
+            INFO)  color="\033[1;34m" ;;  # Blu
+            WARN)  color="\033[1;33m" ;;  # Giallo
+            ERROR) color="\033[1;31m" ;;  # Rosso
+            DEBUG) color="\033[0;36m" ;;  # Ciano
+            *)     color="\033[0m"     ;; # Reset
+        esac
+        echo -e "[$timestamp] [$level] ${color}${message}\033[0m"
+    else
+        echo "[$timestamp] [$level] $message"
+    fi
+}
+
+spinner() {
+    local pid=$!
+    local delay=0.1
+    local spinstr='|/-\'
+    while kill -0 "$pid" 2>/dev/null; do
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+    done
+    wait $pid
+}
+
+silent_run_with_spinner() {
+    local description="$1"
+    shift
+    log INFO "$description..."
+    ("$@" >/dev/null 2>&1) &
+    spinner
+    if [ $? -eq 0 ]; then
+        log INFO "$description completed"
+    else
+        log ERROR "$description failed"
+        ERROR_ENCOUNTERED+=("$description")
+        return 1
+    fi
+}
+
+install_gnome_extension_from_prompt() {
+    local extension_name="$1"
+    local extension_url="$2"
+
+    if [[ -z "$extension_name" || -z "$extension_url" ]]; then
+        log ERROR "Missing name or URL for Gnome extension"
+        return 1
+    fi
+
+    silent_run_with_spinner "Installing Gnome extension: $extension_name" install_gnome_extension_from_url "$extension_url"
 }
 
 docker() {
@@ -69,7 +131,7 @@ docker() {
             sudo usermod -aG docker "$USER"
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
             ;;
     esac
 }
@@ -82,7 +144,7 @@ ulauncher() {
             sudo add-apt-repository universe -y && sudo add-apt-repository ppa:agornostal/ulauncher -y && sudo apt update && sudo apt install ulauncher
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
             ;;
     esac
 }
@@ -98,7 +160,7 @@ chrome() {
             sudo apt install -y google-chrome-stable
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
             ;;
     esac
 }
@@ -113,7 +175,7 @@ teamViewer() {
             sudo apt install -f -y
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
             ;;
     esac
 }
@@ -221,7 +283,38 @@ developmentTools() {
             eval "sudo nala install -y curl wget build-essential linux-headers-${KERNEL_VERSION} linux-headers-generic git"
             ;;
         * )
-            echo "Operazione annullata."
+            echo "Aborted."
+            ;;
+    esac
+}
+
+
+fiddler() {
+    read -r -p "Do you want to install Fiddler Everywhere? (Y/N): " choice
+
+    case "$choice" in
+        y|Y )
+            google-chrome "https://www.telerik.com/download/fiddler/fiddler-everywhere-linux"
+            ;;
+        * )
+            echo "Aborted."
+            ;;
+    esac
+}
+
+charles() {
+    read -r -p "Do you want to install Charles Proxy? (Y/N): " choice
+
+    case "$choice" in
+        y|Y )
+            sudo mkdir -p /etc/apt/keyrings
+            wget -qO- https://www.charlesproxy.com/packages/apt/charles-repo.asc | sudo gpg --dearmor -o /etc/apt/keyrings/charles-repo.gpg
+            echo "deb [signed-by=/etc/apt/keyrings/charles-repo.gpg] https://www.charlesproxy.com/packages/apt/ charles-proxy main" | sudo tee /etc/apt/sources.list.d/charles.list
+            sudo apt update && sudo apt install charles-proxy5
+
+            ;;
+        * )
+            echo "Aborted."
             ;;
     esac
 }
@@ -242,8 +335,16 @@ request "Do you want to install neofetch?" "neofetch"
 request "Do you want to install Fail2ban?" "fail2ban"
 request "Do you want to install GPG?" "gnupg"
 
+# Arduino
+requestSnap "Do you want to install Arduino IDE? [SNAP]" "arduino"
+sudo usermod -a -G dialout "$USER"
+arduino.pip install requests
+
 # AppImage 
 request "Do you want to install AppImage support" "libfuse2t64"
+
+# Backup
+request "Do you want to install Timeshift (system backup)?" "timeshift"
 
 # Browser
 chrome
@@ -288,7 +389,7 @@ sudo systemctl start ufw
 # Font
 request "Do you want to install Microsoft fonts?" "ttf-mscorefonts-installer"
 request "Do you want to install Font Manager?" "font-manager"
-request "Do you want to install additional fonts (Noto, Papirus, Fira)?" "fonts-noto fonts-noto-cjk fonts-noto-color-emoji fonts-powerline"
+request "Do you want to install additional fonts (Noto, Papirus, Fira)?" "fonts-noto fonts-noto-cjk fonts-noto-color-emoji fonts-powerline fonts-roboto fonts-cascadia-code"
 request "Do you want to install FiraCode font?" "fonts-firacode"
 sudo fc-cache -f -v
 
@@ -307,17 +408,53 @@ request "Do you want to install GameMode (Feral Interactive optimization daemon)
 request "Do you want to install MangoHud (FPS overlay & performance metrics)?" "mangohud"
 request "Do you want to install vkBasalt (Vulkan post-processing tool)?" "vkbasalt"
 request "Do you want to install goverlay (GUI per MangoHud, vkBasalt, Gamescope)?" "goverlay"
-request "Do you want to install RetroArch (multi-emulator frontend)?" "retroarch retroarch-assets retroarch-dbg"
-request "Do you want to install Dolphin Emulator (GameCube/Wii)?" "dolphin-emu"
-request "Do you want to install PCSX2 (PlayStation 2 emulator)?" "pcsx2"
-request "Do you want to install PPSSPP (PSP emulator)?" "ppsspp"
-request "Do you want to install Citra (Nintendo 3DS emulator)?" "citra-emu"
-request "Do you want to install Yuzu (Nintendo Switch emulator)?" "yuzu"
+requestSnap "Do you want to install RetroArch (multi-emulator frontend)? [SNAP]" "retroarch"
+request "Do you want to install MAME (arcade emulator)?" "mame"
+request "Do you want to install ScummVM (classic adventure games emulator)?" "scummvm"
 
 # Gnome
 request "Do you want to install gnome tweaks?" "gnome-tweaks"
 request "Do you want to install Gnome extensions?" "gnome-shell-extensions chrome-gnome-shell"
 request "Do you want to install Gnome Shell Extension Manager" "gnome-shell-extension-manager"
+install_gnome_extension_from_prompt "Removable Drive Menu" "https://extensions.gnome.org/extension-data/drive-menugnome-shell-extensions.gcampax.github.com.v63.shell-extension.zip"
+install_gnome_extension_from_prompt "AppIndicator and KStatusNotifierItem Support" "https://extensions.gnome.org/extension-data/appindicatorsupportrgcjonas.gmail.com.v60.shell-extension.zip"
+install_gnome_extension_from_prompt "VirtualBox applet" "https://extensions.gnome.org/extension-data/vbox-appletgs.eros2.info.v18.shell-extension.zip"
+install_gnome_extension_from_prompt "Simple Timer" "https://extensions.gnome.org/extension-data/simple-timermajortomvr.github.com.v15.shell-extension.zip"
+install_gnome_extension_from_prompt "GSConnect" "https://extensions.gnome.org/extension-data/gsconnectandyholmes.github.io.v62.shell-extension.zip"
+install_gnome_extension_from_prompt "RebootToUEFI" "https://extensions.gnome.org/extension-data/reboottouefiubaygd.com.v24.shell-extension.zip"
+install_gnome_extension_from_prompt "Pip on top" "https://extensions.gnome.org/extension-data/pip-on-toprafostar.github.com.v8.shell-extension.zip"
+install_gnome_extension_from_prompt "Display Configuration Switcher" "https://extensions.gnome.org/extension-data/display-configuration-switcherknokelmaat.gitlab.com.v10.shell-extension.zip"
+install_gnome_extension_from_prompt "Proxy Switcher" "https://extensions.gnome.org/extension-data/ProxySwitcherflannaghan.com.v23.shell-extension.zip"
+install_gnome_extension_from_prompt "Touchpad Switcher" "https://extensions.gnome.org/extension-data/touchpadgpawru.v7.shell-extension.zip"
+install_gnome_extension_from_prompt "StreamController Integration" "https://extensions.gnome.org/extension-data/streamcontrollercore447.com.v4.shell-extension.zip"
+install_gnome_extension_from_prompt "Steal my focus window" "https://extensions.gnome.org/extension-data/steal-my-focus-windowsteal-my-focus-window.v5.shell-extension.zip"
+install_gnome_extension_from_prompt "Night Light Slider" "https://extensions.gnome.org/extension-data/night-light-sliderdevoscarm.github.com.v1.shell-extension.zip"
+install_gnome_extension_from_prompt "Caffeine" "https://extensions.gnome.org/extension-data/caffeinepatapon.info.v57.shell-extension.zip"
+install_gnome_extension_from_prompt "TeaTimer" "https://extensions.gnome.org/extension-data/TeaTimerzener.sbg.at.v9.shell-extension.zip"
+install_gnome_extension_from_prompt "Wifi QR Code" "https://extensions.gnome.org/extension-data/wifiqrcodeglerro.pm.me.v17.shell-extension.zip"
+install_gnome_extension_from_prompt "Resolution and Refresh Rate in Quick Settings" "https://extensions.gnome.org/extension-data/quick-settings-resolution-and-refresh-raterukins.github.io.v6.shell-extension.zip"
+install_gnome_extension_from_prompt "Notifications Alert" "https://extensions.gnome.org/extension-data/notifications-alert-on-user-menuhackedbellini.gmail.com.v53.shell-extension.zip"
+install_gnome_extension_from_prompt "Clipboard Indicator" "https://extensions.gnome.org/extension-data/clipboard-indicatortudmotu.com.v68.shell-extension.zip"
+install_gnome_extension_from_prompt "Better End Session Dialog" "https://extensions.gnome.org/extension-data/better-end-session-dialogpopov895.ukr.net.v28.shell-extension.zip"
+install_gnome_extension_from_prompt "Bluetooth File Sender" "https://extensions.gnome.org/extension-data/bluetooth-file-senderChristophrrb.github.io.v8.shell-extension.zip"
+install_gnome_extension_from_prompt "Zen" "https://extensions.gnome.org/extension-data/zenle0.gs.v9.shell-extension.zip"
+install_gnome_extension_from_prompt "Systemd Status" "https://extensions.gnome.org/extension-data/systemd-statusne0sight.github.io.v8.shell-extension.zip"
+install_gnome_extension_from_prompt "Keyboard Backlight Slider" "https://extensions.gnome.org/extension-data/keyboard-backlight-menuophir.dev.v6.shell-extension.zip"
+install_gnome_extension_from_prompt "Custom OSD" "https://extensions.gnome.org/extension-data/custom-osdneuromorph.v28.shell-extension.zip"
+install_gnome_extension_from_prompt "Containers" "https://extensions.gnome.org/extension-data/containersroyg.v38.shell-extension.zip"
+install_gnome_extension_from_prompt "HeadsetControl" "https://extensions.gnome.org/extension-data/HeadsetControllauinger-clan.de.v59.shell-extension.zip"
+install_gnome_extension_from_prompt "Smart Home" "https://extensions.gnome.org/extension-data/smart-homechlumskyvaclav.gmail.com.v13.shell-extension.zip"
+install_gnome_extension_from_prompt "Printers" "https://extensions.gnome.org/extension-data/printerslinux-man.org.v29.shell-extension.zip"
+install_gnome_extension_from_prompt "SettingsCenter" "https://extensions.gnome.org/extension-data/SettingsCenterlauinger-clan.de.v31.shell-extension.zip"
+install_gnome_extension_from_prompt "Bluetooth Battery Meter" "https://extensions.gnome.org/extension-data/Bluetooth-Battery-Metermaniacx.github.com.v32.shell-extension.zip"
+install_gnome_extension_from_prompt "Tweaks & Extensions in System Menu" "https://extensions.gnome.org/extension-data/tweaks-system-menuextensions.gnome-shell.fifi.org.v24.shell-extension.zip"
+install_gnome_extension_from_prompt "Easy Docker Containers" "https://extensions.gnome.org/extension-data/easy_docker_containersred.software.systems.v29.shell-extension.zip"
+install_gnome_extension_from_prompt "Status Area Horizontal Spacing" "https://extensions.gnome.org/extension-data/status-area-horizontal-spacingmathematical.coffee.gmail.com.v30.shell-extension.zip"
+install_gnome_extension_from_prompt "Random Wallpaper" "https://extensions.gnome.org/extension-data/randomwallpaperiflow.space.v36.shell-extension.zip"
+install_gnome_extension_from_prompt "Lock Keys" "https://extensions.gnome.org/extension-data/lockkeysvaina.lt.v61.shell-extension.zip"
+install_gnome_extension_from_prompt "ArcMenu" "https://extensions.gnome.org/extension-data/arcmenuarcmenu.com.v66.shell-extension.zip" 
+install_gnome_extension_from_prompt "Media Controls" "https://extensions.gnome.org/extension-data/mediacontrolscliffniff.github.com.v37.shell-extension.zip"
+install_gnome_extension_from_prompt "Dash to Panel" "https://extensions.gnome.org/extension-data/dash-to-paneljderose9.github.com.v68.shell-extension.zip"
 
 # Go
 request "Do you want to install Go language?" "golang"
@@ -347,6 +484,11 @@ request "Do you want to install HandBrake?" "handbrake"
 request "Do you want to install network tools?" "nmap tcpdump wireshark ipset traceroute tshark aircrack-ng bettercap net-tools"
 requestSnap "Do you want to install Discord? [SNAP]" "discord"
 requestSnap "Do you want to install Spotify? [SNAP]" "spotify"
+requestSnap "Do you want to install Insomnia (API client)? [SNAP]" "insomnia"
+requestSnap "Do you want to install Postman (API client)? [SNAP]" "postman"
+requestSnap "Do you want to install Bruno? (API client)? [SNAP]" "bruno"
+fiddler
+charles
 
 # NodeJS
 request "Do you want to install NodeJS and npm?" "nodejs npm"
@@ -386,6 +528,15 @@ sudo usermod -aG vboxusers "$USER"
 
 # Windows
 requestFlatpak "Do you want to install Bottles (manage Windows apps)? [FLATPAK]" "com.usebottles.bottles"
+
+# Java
+request "Do you want to install OpenJDK 11?" "openjdk-11-jdk"
+request "Do you want to install OpenJDK 17?" "openjdk-17-jdk"
+requestSnap "Do you want to install Apache Netbeans IDE? [SNAP]" "netbeans" 
+
+# Other
+requestSnap "Do you want to install TickTick? [SNAP]" "ticktick"
+
 
 # Finale
 echo "Cleaning up..."
