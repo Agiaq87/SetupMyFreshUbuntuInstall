@@ -319,6 +319,23 @@ charles() {
     esac
 }
 
+openRgb() {
+    read -r -p "Do you want to install OpenRGB (RGB lighting control)? (Y/N): " choice
+
+    case "$choice" in
+        y|Y )
+            sudo apt install libi2c-dev
+            wget -O openrgb.deb "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/openrgb_1.0rc2_amd64_bookworm_0fca93e.deb"
+            sudo dpkg -i openrgb.deb
+            sudo apt install -f -y
+            ;;
+        * )
+            echo "Aborted."
+            ;;
+    esac
+}
+
+
 echo "Starting backup script..."
 # Update and upgrade the system
 sudo apt update && sudo apt upgrade -y && sudo snap refresh && sudo apt install unattended-upgrades -y && sudo apt install -y nala && sudo nala fetch && sudo add-apt-repository multiverse
@@ -489,12 +506,16 @@ requestSnap "Do you want to install Postman (API client)? [SNAP]" "postman"
 requestSnap "Do you want to install Bruno? (API client)? [SNAP]" "bruno"
 fiddler
 charles
+request "Do you want to install HTTP Toolkit (intercept HTTP/HTTPS)?" "httptoolkit"
+request "Do you want to install mitmproxy (intercept HTTP/HTTPS)?" "mitmproxy"
+requestSnap "Do you want to install OWASP ZAP? [SNAP]" "zaproxy --classic"
 
 # NodeJS
 request "Do you want to install NodeJS and npm?" "nodejs npm"
 
 # OpenRGB
-requestFlatpak "Do you want to install OpenRGB? [FLATPAK]" "openrgb"
+#requestFlatpak "Do you want to install OpenRGB? [FLATPAK]" "openrgb" # Not working on Ubuntu 22.04, need to compile from source
+openRgb
 
 # Python
 request "Do you want to install Python and pip?" "python3 python3-pip python3-dev"
