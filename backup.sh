@@ -149,6 +149,22 @@ ulauncher() {
     esac
 }
 
+albert() {
+    read -r -p "Do you want to install Albert? (Y/N): " choice
+
+    case "$choice" in
+        y|Y )
+            echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
+curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+sudo apt update
+sudo apt install albert
+            ;;
+        * )
+            echo "Aborted."
+            ;;
+    esac
+}
+
 chrome() {
     read -r -p "Do you want to install Google Chrome? (Y/N): " choice
 
@@ -185,7 +201,7 @@ jetbrainsToolbox() {
 JETBRAINS_JSON=$(curl -s "https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release")
 JETBRAINS_URL=$(echo "$JETBRAINS_JSON" | grep -o '"linux":{"link":"[^"]*"' | cut -d'"' -f4)
 
-echo "📥 Download da: $JETBRAINS_URL"
+echo "Download da: $JETBRAINS_URL"
     wget -O jetbrains-toolbox.tar.gz "$JETBRAINS_URL"
     tar -xzf jetbrains-toolbox.tar.gz
     JETBRAINS_DIR=$(find . -maxdepth 1 -type d -name "jetbrains-toolbox-*" | head -n 1)
@@ -328,6 +344,19 @@ openRgb() {
             wget -O openrgb.deb "https://codeberg.org/OpenRGB/OpenRGB/releases/download/release_candidate_1.0rc2/openrgb_1.0rc2_amd64_bookworm_0fca93e.deb"
             sudo dpkg -i openrgb.deb
             sudo apt install -f -y
+            ;;
+        * )
+            echo "Aborted."
+            ;;
+    esac
+}
+
+cyberSecurity() {
+    read -r -p "Do you want to install cybersecurity tools (John the Ripper, Hashcat, Hydra, Metasploit Framework, Burp Suite)? (Y/N): " choice
+
+    case "$choice" in
+        y|Y )
+            eval "sudo apt install -y john hashcat hydra metasploit-framework burpsuite"
             ;;
         * )
             echo "Aborted."
@@ -499,6 +528,7 @@ request "Do you want to install HandBrake?" "handbrake"
 
 # Network
 request "Do you want to install network tools?" "nmap tcpdump wireshark ipset traceroute tshark aircrack-ng bettercap net-tools"
+cyberSecurity
 requestSnap "Do you want to install Discord? [SNAP]" "discord"
 requestSnap "Do you want to install Spotify? [SNAP]" "spotify"
 requestSnap "Do you want to install Insomnia (API client)? [SNAP]" "insomnia"
@@ -509,9 +539,14 @@ charles
 request "Do you want to install HTTP Toolkit (intercept HTTP/HTTPS)?" "httptoolkit"
 request "Do you want to install mitmproxy (intercept HTTP/HTTPS)?" "mitmproxy"
 requestSnap "Do you want to install OWASP ZAP? [SNAP]" "zaproxy --classic"
+request "Do you want to install Filezilla FTP client?" "filezilla"
 
 # NodeJS
 request "Do you want to install NodeJS and npm?" "nodejs npm"
+
+# Office
+request "Do you want to install Onedrive client (rclone backend)?" "onedrive"
+requestSnap "Do you want to install Office365 Web Desktop? [SNAP]" "office365webdesktop"
 
 # OpenRGB
 #requestFlatpak "Do you want to install OpenRGB? [FLATPAK]" "openrgb" # Not working on Ubuntu 22.04, need to compile from source
@@ -535,8 +570,9 @@ synology
 # TeamViewer
 teamViewer
 
-# Ulauncher
+# Launcher
 ulauncher
+albert
 
 # Utils
 request "Do you want to install Stacer (system optimizer/monitor)?" "stacer"
