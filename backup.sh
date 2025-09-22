@@ -357,6 +357,30 @@ cyberSecurity() {
     case "$choice" in
         y|Y )
             eval "sudo apt install -y john hashcat hydra metasploit-framework burpsuite"
+            # Network tools
+            request "Install Nmap?" "nmap"
+            request "Install Masscan?" "masscan"
+            request "Install Wireshark?" "wireshark"
+            request "Install Tcpdump?" "tcpdump"
+
+            # Pentesting
+            request "Install Metasploit Framework?" "metasploit-framework"
+            request "Install Hydra?" "hydra"
+            request "Install SQLmap?" "sqlmap"
+            request "Install John the Ripper?" "john"
+
+            # Forensics & OSINT
+            request "Install Binwalk?" "binwalk"
+            request "Install Radare2?" "radare2"
+            request "Install Ghidra (reverse engineering)?" "ghidra"
+            request "Install theHarvester?" "theharvester"
+            requestFlatpak "Install Maltego (OSINT GUI)? [FLATPAK]" "com.paterva.maltego"
+
+            # System security
+            request "Install Lynis (Linux auditing)?" "lynis"
+            request "Install Chkrootkit?" "chkrootkit"
+            request "Install RKHunter?" "rkhunter"
+            request "Install Fail2ban?" "fail2ban"
             ;;
         * )
             echo "Aborted."
@@ -575,6 +599,7 @@ request "Do you want to install HTTP Toolkit (intercept HTTP/HTTPS)?" "httptoolk
 request "Do you want to install mitmproxy (intercept HTTP/HTTPS)?" "mitmproxy"
 requestSnap "Do you want to install OWASP ZAP? [SNAP]" "zaproxy --classic"
 request "Do you want to install Filezilla FTP client?" "filezilla"
+
 
 # NodeJS
 request "Do you want to install NodeJS and npm?" "nodejs npm"
