@@ -364,15 +364,33 @@ cyberSecurity() {
     esac
 }
 
+tlp() {
+    read -r -p "Do you want to install TLP (advanced power management for Linux)? (Y/N): " choice
+
+    case "$choice" in
+        y|Y )
+            eval "sudo apt install -y tlp tlp-rdw"
+            sudo systemctl enable tlp
+            sudo systemctl start tlp
+            ;;
+        * )
+            echo "Aborted."
+            ;;
+    esac
+}
+
 
 echo "Starting backup script..."
 # Update and upgrade the system
 sudo apt update && sudo apt upgrade -y && sudo snap refresh && sudo apt install unattended-upgrades -y && sudo apt install -y nala && sudo nala fetch && sudo add-apt-repository multiverse
 
 # Must install
-request "Do you want to install package gui utils ?" "gdebi synaptic"
-request "Do you want to install Flatpak and setup Flathub?" "flatpak && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo"
+sudo nala install -y flatpak && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && sudo nala install -y gnome-software-plugin-flatpak
 request "Do you need restricted extras (mp3, etc) and gstreamer codec?" "ubuntu-restricted-extras gstreamer1.0-vaapi"
+tlp
+
+# Start
+request "Do you want to install package gui utils ?" "gdebi synaptic"
 request "Do you want to install system monitoring tools?" "htop neofetch bpytop"
 request "Do you want to install file system tools?" "samba-common-bin exfat-fuse ntfs-3g"
 developmentTools
@@ -454,9 +472,26 @@ request "Do you want to install GameMode (Feral Interactive optimization daemon)
 request "Do you want to install MangoHud (FPS overlay & performance metrics)?" "mangohud"
 request "Do you want to install vkBasalt (Vulkan post-processing tool)?" "vkbasalt"
 request "Do you want to install goverlay (GUI per MangoHud, vkBasalt, Gamescope)?" "goverlay"
+requestFlatpak "Do you want to install ProtonUp-Qt (manage Proton-GE versions)? [FLATPAK]" "net.davidotek.pupgui2"
+requestFlatpak "Do you want to install Heroic Games Launcher (Epic/GOG integration)? [FLATPAK]" "com.heroicgameslauncher.hgl"
+request "Do you want to install itch.io client?" "itch"
+request "Do you want to install PlayOnLinux?" "playonlinux"
+
+
+# Games - Emulator
 requestSnap "Do you want to install RetroArch (multi-emulator frontend)? [SNAP]" "retroarch"
 request "Do you want to install MAME (arcade emulator)?" "mame"
 request "Do you want to install ScummVM (classic adventure games emulator)?" "scummvm"
+requestFlatpak "Do you want to install Dolphin (GameCube/Wii emulator)? [FLATPAK]" "org.DolphinEmu.dolphin-emu"
+requestFlatpak "Do you want to install PCSX2 (PS2 emulator)? [FLATPAK]" "net.pcsx2.PCSX2"
+requestFlatpak "Do you want to install DuckStation (PS1 emulator)? [FLATPAK]" "org.duckstation.DuckStation"
+requestFlatpak "Do you want to install RPCS3 (PS3 emulator)? [FLATPAK]" "net.rpcs3.RPCS3"
+requestFlatpak "Do you want to install Yuzu (Switch emulator)? [FLATPAK]" "org.yuzu_emu.yuzu"
+requestFlatpak "Do you want to install Ryujinx (Switch emulator)? [FLATPAK]" "org.ryujinx.Ryujinx"
+requestFlatpak "Do you want to install Citra (3DS emulator)? [FLATPAK]" "org.citra_emu.citra"
+requestFlatpak "Do you want to install PPSSPP (PSP emulator)? [FLATPAK]" "org.ppsspp.PPSSPP"
+requestFlatpak "Do you want to install Mupen64Plus-Next (Nintendo 64 emulator)? [FLATPAK]" "org.mupen64plus.Mupen64Plus-Next"
+requestFlatpak "Do you want to install DOSBox-X (MS-DOS emulator)? [FLATPAK]" "com.dosbox_x.DOSBox-X"
 
 # Gnome
 request "Do you want to install gnome tweaks?" "gnome-tweaks"

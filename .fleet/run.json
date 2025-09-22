@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "command",
+            "name": "ShellCheck",
+            "program": "shellcheck",
+            "args": ["backup.sh"]
+        }
+    ]
+}
