@@ -178,42 +178,42 @@ teamViewer() {
     esac
 }
 
-jetbrainsToolbox() {
-# Ottiene l'URL dell'ultima versione
-JETBRAINS_JSON=$(curl -s "https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release")
-JETBRAINS_URL=$(echo "$JETBRAINS_JSON" | grep -o '"linux":{"link":"[^"]*"' | cut -d'"' -f4)
+# jetbrainsToolbox() {
+# # Ottiene l'URL dell'ultima versione
+# JETBRAINS_JSON=$(curl -s "https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release")
+# JETBRAINS_URL=$(echo "$JETBRAINS_JSON" | grep -o '"linux":{"link":"[^"]*"' | cut -d'"' -f4)
 
-echo "Download da: $JETBRAINS_URL"
-    wget -O jetbrains-toolbox.tar.gz "$JETBRAINS_URL"
-    tar -xzf jetbrains-toolbox.tar.gz
-    JETBRAINS_DIR=$(find . -maxdepth 1 -type d -name "jetbrains-toolbox-*" | head -n 1)
+# echo "Download da: $JETBRAINS_URL"
+#     wget -O jetbrains-toolbox.tar.gz "$JETBRAINS_URL"
+#     tar -xzf jetbrains-toolbox.tar.gz
+#     JETBRAINS_DIR=$(find . -maxdepth 1 -type d -name "jetbrains-toolbox-*" | head -n 1)
     
-    if [ -n "$JETBRAINS_DIR" ]; then
-        # Installa in /opt
-        sudo mkdir -p /opt/jetbrains-toolbox
-        sudo cp -r "$JETBRAINS_DIR"/* /opt/jetbrains-toolbox/
-        sudo chmod +x /opt/jetbrains-toolbox/jetbrains-toolbox
+#     if [ -n "$JETBRAINS_DIR" ]; then
+#         # Installa in /opt
+#         sudo mkdir -p /opt/jetbrains-toolbox
+#         sudo cp -r "$JETBRAINS_DIR"/* /opt/jetbrains-toolbox/
+#         sudo chmod +x /opt/jetbrains-toolbox/jetbrains-toolbox
         
-        # Crea collegamento nel menu applicazioni
-        cat << 'DESKTOP_EOF' | sudo tee /usr/share/applications/jetbrains-toolbox.desktop > /dev/null
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=JetBrains Toolbox
-Icon=applications-development
-Exec=/opt/jetbrains-toolbox/jetbrains-toolbox
-Comment=JetBrains IDEs manager
-Categories=Development;
-StartupWMClass=jetbrains-toolbox
-StartupNotify=true
-DESKTOP_EOF
+#         # Crea collegamento nel menu applicazioni
+#         cat << 'DESKTOP_EOF' | sudo tee /usr/share/applications/jetbrains-toolbox.desktop > /dev/null
+# [Desktop Entry]
+# Version=1.0
+# Type=Application
+# Name=JetBrains Toolbox
+# Icon=applications-development
+# Exec=/opt/jetbrains-toolbox/jetbrains-toolbox
+# Comment=JetBrains IDEs manager
+# Categories=Development;
+# StartupWMClass=jetbrains-toolbox
+# StartupNotify=true
+# DESKTOP_EOF
         
-        echo "JetBrains Toolbox installed successfully."
-    else
-        echo "Cannot install JetBrains Toolbox"
-    fi
+#         echo "JetBrains Toolbox installed successfully."
+#     else
+#         echo "Cannot install JetBrains Toolbox"
+#     fi
     
-}
+# }
 
 synology() {
     DOWNLOAD_DIR="$HOME/deb_packages"
@@ -388,32 +388,32 @@ tlp() {
 
 echo "Starting backup script..."
 # Update and upgrade the system
-sudo apt update && sudo apt upgrade -y && sudo snap refresh && sudo apt install unattended-upgrades -y && sudo apt install -y nala && sudo nala fetch && sudo add-apt-repository multiverse
+#sudo apt update && sudo apt upgrade -y && sudo snap refresh && sudo apt install unattended-upgrades -y && sudo apt install -y nala && sudo nala fetch && sudo add-apt-repository multiverse
 # Install whiptail for dialog boxes
 sudo nala install whiptail -y
 
 # Must install
-sudo nala install -y flatpak && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && sudo nala install -y gnome-software-plugin-flatpak
-request "Do you need restricted extras (mp3, etc) and gstreamer codec?" "ubuntu-restricted-extras gstreamer1.0-vaapi"
+#sudo nala install -y flatpak && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && sudo nala install -y gnome-software-plugin-flatpak
+#request "Do you need restricted extras (mp3, etc) and gstreamer codec?" "ubuntu-restricted-extras gstreamer1.0-vaapi"
 tlp
 
 # Start
 request "Do you want to install package gui utils ?" "gdebi synaptic"
-request "Do you want to install system monitoring tools?" "htop neofetch bpytop"
-request "Do you want to install file system tools?" "samba-common-bin exfat-fuse ntfs-3g"
+#request "Do you want to install system monitoring tools?" "htop neofetch bpytop"
+#request "Do you want to install file system tools?" "samba-common-bin exfat-fuse ntfs-3g"
 developmentTools
-request "Do you want to install video tools (libxi6, libxrender1, libxtst6, libfontconfig1, mesa-utils)?" "libxi6 libxrender1 libxtst6 libfontconfig1 mesa-utils"
-request "Do you want to install neofetch?" "neofetch"
+#request "Do you want to install video tools (libxi6, libxrender1, libxtst6, libfontconfig1, mesa-utils)?" "libxi6 libxrender1 libxtst6 libfontconfig1 mesa-utils"
+#request "Do you want to install neofetch?" "neofetch"
 request "Do you want to install Fail2ban?" "fail2ban"
-request "Do you want to install GPG?" "gnupg"
+#request "Do you want to install GPG?" "gnupg"
 
 # Arduino
-requestSnap "Do you want to install Arduino IDE? [SNAP]" "arduino"
-sudo usermod -a -G dialout "$USER"
-arduino.pip install requests
+# requestSnap "Do you want to install Arduino IDE? [SNAP]" "arduino"
+# sudo usermod -a -G dialout "$USER"
+# arduino.pip install requests
 
 # AppImage 
-request "Do you want to install AppImage support" "libfuse2t64"
+# request "Do you want to install AppImage support" "libfuse2t64"
 
 # Backup
 request "Do you want to install Timeshift (system backup)?" "timeshift"
@@ -433,7 +433,7 @@ request "Do you want to install compression utils?" "unzip zip unrar p7zip tar"
 requestFlatpak "Do you want to install PeaZip? [FLATPAK]" "io.github.peazip.PeaZip"
 
 # Database 
-requestSnap "Do you want to install DBeaver CE? [SNAP]" "dbeaver-ce"
+# requestSnap "Do you want to install DBeaver CE? [SNAP]" "dbeaver-ce"
 request "Do you want to install PostgreSQL client tools?" "postgresql-client"
 
 # Driver section
@@ -466,10 +466,10 @@ request "Do you want to install FiraCode font?" "fonts-firacode"
 sudo fc-cache -f -v
 
 # Flutter SDK
-requestSnap "Do you want to install Flutter SDK? [SNAP]" "flutter"
-flutter
-flutter config
-flutter doctor
+# requestSnap "Do you want to install Flutter SDK? [SNAP]" "flutter"
+# flutter
+# flutter config
+# flutter doctor
 
 # Games
 request "Do you want to install Steam?" "steam"
