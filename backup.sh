@@ -1,8 +1,17 @@
 #!/bin/bash
 
+AUTO_PAGES=0
+STREAM_CONTROLLER_INSTALLED=0
+
 ### FUNZIONI DI SUPPORTO ###
 installNala() {
     sudo apt update && sudo apt install -y nala
+}
+
+enableFlatpak() {
+    sudo nala install -y flatpak 
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo 
+    sudo nala install -y gnome-software-plugin-flatpak
 }
 
 request() {
@@ -36,13 +45,22 @@ request() {
 
 ### STREAM DECK AUTOMATION ###
 checkStreamDeck() {
-    AUTO_PAGES=0
-    STREAMDECK_CONNECTED=0
+    local streamDeckFounded=0
+
     if lsusb | grep "Stream Deck"; then
-        STREAMDECK_CONNECTED=1
+        streamDeckFounded=1
     fi
 
-    if [ $STREAMDECK_CONNECTED -eq 1 ]; then
+    if [ $streamDeckFounded -eq 1 ]; then
+        if whiptail --title "Stream Deck found" --yesno \
+            "Stream Deck found, Do you want to install StreamController software [FLATPAK]?" \
+            10 60; then
+                STREAM_CONTROLLER_INSTALLED=1
+                flatpak install flathub com.core447.StreamController -y
+        fi
+    fi
+
+    if [ $STREAM_CONTROLLER_INSTALLED -eq 1 ]; then
         if whiptail --title "Stream Deck Automation" --yesno \
             "Stream Deck found, Do you want to automatic create page for this script?\n
             - For each submenu it create a page\n
@@ -157,6 +175,8 @@ utilities_menu() {
 
 
 ### MENU PRINCIPALE ###
+installNala
+enableFlatpak
 checkStreamDeck
 while true; do
 CHOICE=$(whiptail --title "Setup My Ubuntu Fresh Install" --menu "Select one:" 20 78 10 \

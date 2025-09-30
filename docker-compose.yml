@@ -1,0 +1,8 @@
+services:
+  system:
+    image: ubuntu:latest
+    container_name: ubuntu_system
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/root
