@@ -18,6 +18,8 @@ source ./action/dev_menu.sh
 source ./action/virt_menu.sh
 source ./action/multimedia_menu.sh
 source ./action/system_menu.sh
+source ./action/game_menu.sh
+source ./action/sub/game_emulator_menu.sh
 
 log INFO "SetupMyFreshUbuntuInstall init"
 
@@ -63,7 +65,7 @@ while true; do
                 show_multimedia_menu
                 ;;
             "5") # Gaming
-                log INFO "Gaming tools - To be implemented"
+                show_gaming_menu
                 ;;
             "6") # System
                 show_system_menu
