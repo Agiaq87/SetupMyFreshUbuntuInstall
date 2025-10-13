@@ -60,6 +60,9 @@ show_dev_menu() {
                 ;;
             "flutter")
                 install_package_secure "Flutter" "flutter" "snap" "Google's UI toolkit" || log WARN "Flutter installation failed, continuing..."
+                if [ $? -eq 0 ]; then
+                    flutter_post_install
+                fi
                 ;;
             "git")
                 install_package_secure "Git" "git" "nala" "Distributed version control system" || log WARN "Git installation failed, continuing..."

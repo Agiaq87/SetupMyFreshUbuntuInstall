@@ -13,13 +13,16 @@ source ./utils/install.sh
 source ./ui/notification/notification.sh
 source ./ui/message/show_message.sh
 source ./ui/checklist/show_checklist.sh
+source ./ui/terminal/terminal.sh
 source ./action/browser_menu.sh
 source ./action/dev_menu.sh
+source ./action/sub/dev_action.sh
 source ./action/virt_menu.sh
 source ./action/multimedia_menu.sh
 source ./action/system_menu.sh
 source ./action/game_menu.sh
 source ./action/sub/game_emulator_menu.sh
+source ./action/writing_menu.sh
 
 log INFO "SetupMyFreshUbuntuInstall init"
 
@@ -61,13 +64,16 @@ while true; do
             "3") # Gaming
                 show_gaming_menu
                 ;;
-            "4") # Multimedia
+            "5") # Multimedia
                 show_multimedia_menu
                 ;;
-            "5") # Virtualization
+            "6") # Virtualization
                 show_virtualization_menu
                 ;;
-            "6") # System
+            "7") # Writing
+                show_writing_menu
+                ;;    
+            "8") # System
                 show_system_menu
                 ;;
             "0") # Exit

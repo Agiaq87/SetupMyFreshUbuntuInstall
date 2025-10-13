@@ -90,14 +90,14 @@ add_repository() {
             echo "ERROR" ; exit 1
         fi
 
-        echo "75"
+        echo "50"
         echo "# Adding repository..."
         # Aggiunge la riga del repository al file list
         if ! echo "$repo_url"; then
             echo "ERROR" ; exit 1
         fi
 
-        echo "90"
+        echo "75"
         echo "# Updating package list..."
         # Aggiorna gli indici dei pacchetti
         if ! sudo apt update 2>&1; then

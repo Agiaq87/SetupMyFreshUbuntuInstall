@@ -10,6 +10,7 @@ show_menu() {
                 FALSE "3" "Gaming" \
                 FALSE "4" "Multimedia" \
                 FALSE "5" "Virtualization" \
-                FALSE "6" "System" \
+                FALSE "6" "Writing" \
+                FALSE "7" "System" \
                 FALSE "0" "Exit"
 }
