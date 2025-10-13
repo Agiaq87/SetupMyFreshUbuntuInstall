@@ -7,9 +7,9 @@ show_menu() {
                 --width=600 --height=500 \
                 TRUE "1" "Browsers" \
                 FALSE "2" "Development tools" \
-                FALSE "3" "Virtualization" \
+                FALSE "3" "Gaming" \
                 FALSE "4" "Multimedia" \
-                FALSE "5" "Gaming" \
+                FALSE "5" "Virtualization" \
                 FALSE "6" "System" \
                 FALSE "0" "Exit"
 }

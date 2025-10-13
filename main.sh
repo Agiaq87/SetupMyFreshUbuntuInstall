@@ -58,14 +58,14 @@ while true; do
             "2") # Dev
                 show_dev_menu
                 ;;
-            "3") # Virtualization
-                show_virtualization_menu
+            "3") # Gaming
+                show_gaming_menu
                 ;;
             "4") # Multimedia
                 show_multimedia_menu
                 ;;
-            "5") # Gaming
-                show_gaming_menu
+            "5") # Virtualization
+                show_virtualization_menu
                 ;;
             "6") # System
                 show_system_menu
