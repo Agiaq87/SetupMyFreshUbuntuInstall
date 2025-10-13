@@ -1,0 +1,355 @@
+
+In new.sh line 23:
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+          ^-------^ SC2155 (warning): Declare and assign separately to avoid masking return values.
+
+
+In new.sh line 28:
+source check.sh
+       ^------^ SC1091 (info): Not following: check.sh was not specified as input (see shellcheck -x).
+
+
+In new.sh line 68:
+                if [ $? -ne 0 ] || [ -z "$password" ]; then
+                     ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 86:
+                if [ $? -ne 0 ] || [ -z "$password" ]; then
+                     ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 270:
+    local output=$(cat "$temp_file")
+          ^----^ SC2155 (warning): Declare and assign separately to avoid masking return values.
+
+
+In new.sh line 321:
+                local output=$(cat "$temp_file")
+                      ^----^ SC2155 (warning): Declare and assign separately to avoid masking return values.
+
+
+In new.sh line 322:
+                if [ $exit_code -eq 0 ]; then
+                     ^--------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                if [ "$exit_code" -eq 0 ]; then
+
+
+In new.sh line 341:
+                if [ $exit_code -eq 0 ]; then
+                     ^--------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                if [ "$exit_code" -eq 0 ]; then
+
+
+In new.sh line 342:
+                    cat "$temp_file" | yad --text-info --title="$title - Completed" --width=700 --height=500 --center --button="OK:0"
+                        ^----------^ SC2002 (style): Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
+
+
+In new.sh line 344:
+                    cat "$temp_file" | yad --text-info --title="$title - Failed" --width=700 --height=500 --center --button="OK:0"
+                        ^----------^ SC2002 (style): Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
+
+
+In new.sh line 355:
+                local output=$(cat "$temp_file")
+                      ^----^ SC2155 (warning): Declare and assign separately to avoid masking return values.
+
+
+In new.sh line 356:
+                if [ $exit_code -eq 0 ]; then
+                     ^--------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                if [ "$exit_code" -eq 0 ]; then
+
+
+In new.sh line 366:
+    return $exit_code
+           ^--------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+    return "$exit_code"
+
+
+In new.sh line 580:
+                                if ! sudo nala install -y $package_cmd 2>&1 | tee -a "$LOG_FILE"; then
+                                                          ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                                if ! sudo nala install -y "$package_cmd" 2>&1 | tee -a "$LOG_FILE"; then
+
+
+In new.sh line 586:
+                                if ! sudo apt install -y $package_cmd 2>&1 | tee -a "$LOG_FILE"; then
+                                                         ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                                if ! sudo apt install -y "$package_cmd" 2>&1 | tee -a "$LOG_FILE"; then
+
+
+In new.sh line 594:
+                            if ! sudo snap install $package_cmd 2>&1 | tee -a "$LOG_FILE"; then
+                                                   ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                            if ! sudo snap install "$package_cmd" 2>&1 | tee -a "$LOG_FILE"; then
+
+
+In new.sh line 601:
+                            if ! flatpak install flathub $package_cmd -y 2>&1 | tee -a "$LOG_FILE"; then
+                                                         ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                            if ! flatpak install flathub "$package_cmd" -y 2>&1 | tee -a "$LOG_FILE"; then
+
+
+In new.sh line 622:
+                if [ $? -ne 0 ]; then
+                     ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 630:
+                            sudo nala install -y $package_cmd 2>&1 | tee -a "$LOG_FILE"
+                                                 ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                            sudo nala install -y "$package_cmd" 2>&1 | tee -a "$LOG_FILE"
+
+
+In new.sh line 632:
+                            sudo apt install -y $package_cmd 2>&1 | tee -a "$LOG_FILE"
+                                                ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                            sudo apt install -y "$package_cmd" 2>&1 | tee -a "$LOG_FILE"
+
+
+In new.sh line 636:
+                        sudo snap install $package_cmd 2>&1 | tee -a "$LOG_FILE"
+                                          ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                        sudo snap install "$package_cmd" 2>&1 | tee -a "$LOG_FILE"
+
+
+In new.sh line 639:
+                        flatpak install flathub $package_cmd -y 2>&1 | tee -a "$LOG_FILE"
+                                                ^----------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+                        flatpak install flathub "$package_cmd" -y 2>&1 | tee -a "$LOG_FILE"
+
+
+In new.sh line 643:
+                if [ $? -ne 0 ]; then
+                     ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 685:
+                if ! echo "$repo_url" | sudo tee "$list_file" >> "$LOG_FILE"; then
+                                                              ^-- SC2024 (warning): sudo doesn't affect redirects. Use .. | sudo tee -a file
+
+
+In new.sh line 710:
+            echo "$repo_url" | sudo tee "$list_file" >> "$LOG_FILE"
+                                                     ^-- SC2024 (warning): sudo doesn't affect redirects. Use .. | sudo tee -a file
+
+
+In new.sh line 715:
+    if [ $? -ne 0 ]; then
+         ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 744:
+    if [ $? -ne 0 ] || [ -z "$choices" ]; then
+         ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 843:
+                    echo "80" ;  sudo nala install -y linux-headers-$(uname -r) linux-headers-generic libfuse2t64 gnupg gdebi htop bpytop neofetch 2>&1 | tee -a "$LOG_FILE"
+                                                                    ^---------^ SC2046 (warning): Quote this to prevent word splitting.
+
+
+In new.sh line 853:
+                sudo nala install -y linux-headers-$(uname -r) linux-headers-generic libfuse2t64 gnupg gdebi htop bpytop neofetch 2>&1 | tee -a "$LOG_FILE"
+                                                   ^---------^ SC2046 (warning): Quote this to prevent word splitting.
+
+
+In new.sh line 986:
+    if [ $? -ne 0 ] || [ -z "$choices" ]; then
+         ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 1091:
+    if [ $? -ne 0 ] || [ -z "$choices" ]; then
+         ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 1180:
+        if [ $? -ne 0 ] || [ -z "$choice" ]; then
+             ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 1266:
+    log "Script interrupted - cleaning up..."
+    ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 1267:
+    debug "Cleanup function called"
+    ^-----------------------------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 1270:
+    if [ -f /tmp/ubuntu_setup_sudo_keeper.pid ]; then
+    ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+       ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 1271:
+        local sudo_keeper_pid=$(cat /tmp/ubuntu_setup_sudo_keeper.pid)
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+              ^-------------^ SC2155 (warning): Declare and assign separately to avoid masking return values.
+                                ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 1272:
+        kill $sudo_keeper_pid 2>/dev/null || true
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+             ^--------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                                             ^--^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+Did you mean: 
+        kill "$sudo_keeper_pid" 2>/dev/null || true
+
+
+In new.sh line 1273:
+        rm -f /tmp/ubuntu_setup_sudo_keeper.pid
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 1274:
+        debug "Sudo keeper process terminated"
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 1277:
+    exit 130
+    ^------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2024 -- sudo doesn't affect redirects. Us...
+  https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
+  https://www.shellcheck.net/wiki/SC2155 -- Declare and assign separately to ...
+
+In new.sh line 23:
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+          ^-------^ SC2155 (warning): Declare and assign separately to avoid masking return values.
+
+
+In new.sh line 28:
+source check.sh
+       ^------^ SC1091 (info): Not following: check.sh was not specified as input (see shellcheck -x).
+
+
+In new.sh line 29:
+source install.sh
+       ^--------^ SC1091 (info): Not following: install.sh was not specified as input (see shellcheck -x).
+
+
+In new.sh line 30:
+source update.sh
+       ^-------^ SC1091 (info): Not following: update.sh was not specified as input (see shellcheck -x).
+
+
+In new.sh line 31:
+source gui.sh
+       ^----^ SC1091 (info): Not following: gui.sh was not specified as input (see shellcheck -x).
+
+
+In new.sh line 183:
+    if [ $? -ne 0 ] || [ -z "$choices" ]; then
+         ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 254:
+                    echo "80" ;  sudo nala install -y linux-headers-$(uname -r) linux-headers-generic libfuse2t64 gnupg gdebi htop bpytop neofetch 2>&1 | tee -a "$LOG_FILE"
+                                                                    ^---------^ SC2046 (warning): Quote this to prevent word splitting.
+
+
+In new.sh line 264:
+                sudo nala install -y linux-headers-$(uname -r) linux-headers-generic libfuse2t64 gnupg gdebi htop bpytop neofetch 2>&1 | tee -a "$LOG_FILE"
+                                                   ^---------^ SC2046 (warning): Quote this to prevent word splitting.
+
+
+In new.sh line 397:
+    if [ $? -ne 0 ] || [ -z "$choices" ]; then
+         ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 502:
+    if [ $? -ne 0 ] || [ -z "$choices" ]; then
+         ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 591:
+        if [ $? -ne 0 ] || [ -z "$choice" ]; then
+             ^-- SC2181 (style): Check exit code directly with e.g. 'if ! mycmd;', not indirectly with $?.
+
+
+In new.sh line 677:
+    log "Script interrupted - cleaning up..."
+    ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 678:
+    debug "Cleanup function called"
+    ^-----------------------------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 681:
+    if [ -f /tmp/ubuntu_setup_sudo_keeper.pid ]; then
+    ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+       ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 682:
+        local sudo_keeper_pid=$(cat /tmp/ubuntu_setup_sudo_keeper.pid)
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+              ^-------------^ SC2155 (warning): Declare and assign separately to avoid masking return values.
+                                ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 683:
+        kill $sudo_keeper_pid 2>/dev/null || true
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+             ^--------------^ SC2086 (info): Double quote to prevent globbing and word splitting.
+                                             ^--^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+Did you mean: 
+        kill "$sudo_keeper_pid" 2>/dev/null || true
+
+
+In new.sh line 684:
+        rm -f /tmp/ubuntu_setup_sudo_keeper.pid
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 685:
+        debug "Sudo keeper process terminated"
+        ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In new.sh line 688:
+    exit 130
+    ^------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
+  https://www.shellcheck.net/wiki/SC2155 -- Declare and assign separately to ...
+  https://www.shellcheck.net/wiki/SC1091 -- Not following: check.sh was not s...
