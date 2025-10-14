@@ -11,6 +11,7 @@ show_menu() {
                 FALSE "4" "Multimedia" \
                 FALSE "5" "Virtualization" \
                 FALSE "6" "Writing" \
-                FALSE "7" "System" \
+                FALSE "7" "Security & Penetration Testing" \
+                FALSE "8" "System" \
                 FALSE "0" "Exit"
 }
