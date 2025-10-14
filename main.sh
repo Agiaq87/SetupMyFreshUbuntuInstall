@@ -23,6 +23,7 @@ source ./action/system_menu.sh
 source ./action/game_menu.sh
 source ./action/sub/game_emulator_menu.sh
 source ./action/writing_menu.sh
+source ./action/security_menu.sh
 
 log INFO "SetupMyFreshUbuntuInstall init"
 
@@ -62,7 +63,7 @@ while true; do
                 show_dev_menu
                 ;;
             "3") # Gaming
-                show_gaming_menu
+                show_game_menu
                 ;;
             "5") # Multimedia
                 show_multimedia_menu
@@ -73,7 +74,10 @@ while true; do
             "7") # Writing
                 show_writing_menu
                 ;;    
-            "8") # System
+            "8") # Security e penetration testing
+                show_security_menu
+                ;;
+            "9") # System
                 show_system_menu
                 ;;
             "0") # Exit
