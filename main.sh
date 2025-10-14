@@ -24,6 +24,8 @@ source ./action/game_menu.sh
 source ./action/sub/game_emulator_menu.sh
 source ./action/writing_menu.sh
 source ./action/security_menu.sh
+source ./action/trick_tips_menu.sh
+source ./action/sub/gnome_shell_extensions.sh
 
 log INFO "SetupMyFreshUbuntuInstall init"
 
@@ -65,20 +67,23 @@ while true; do
             "3") # Gaming
                 show_game_menu
                 ;;
-            "5") # Multimedia
+            "4") # Multimedia
                 show_multimedia_menu
                 ;;
-            "6") # Virtualization
+            "5") # Virtualization
                 show_virtualization_menu
                 ;;
-            "7") # Writing
+            "6") # Writing
                 show_writing_menu
                 ;;    
-            "8") # Security e penetration testing
+            "7") # Security e penetration testing
                 show_security_menu
                 ;;
-            "9") # System
+            "8") # System
                 show_system_menu
+                ;;
+            "9") # Trick & Tips
+                show_trick_tips_menu
                 ;;
             "0") # Exit
                 log INFO "Setup completed!"

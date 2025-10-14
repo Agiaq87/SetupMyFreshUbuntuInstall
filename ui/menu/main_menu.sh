@@ -13,5 +13,6 @@ show_menu() {
                 FALSE "6" "Writing" \
                 FALSE "7" "Security & Penetration Testing" \
                 FALSE "8" "System" \
+                FALSE "9" "Trick & Tips" \
                 FALSE "0" "Exit"
 }
