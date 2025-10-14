@@ -26,6 +26,7 @@ source ./action/writing_menu.sh
 source ./action/security_menu.sh
 source ./action/trick_tips_menu.sh
 source ./action/sub/gnome_shell_extensions.sh
+source ./action/sub/kernel.sh
 
 log INFO "SetupMyFreshUbuntuInstall init"
 
